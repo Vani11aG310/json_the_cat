@@ -1,11 +1,13 @@
 const needle = require('needle');
-const breed = process.argv[2];
+const fetchBreedDescription = function(breedName, callback) {
+  needle.get(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, (error, response, body) => {
+    if (error) callback(error, null);
+    if (body.length < 1) {
+      callback(null, 'There is no breed with that name');
+    } else {
+      callback(null, body[0].description);
+    }
+  });
+};
 
-needle.get(`https://api.thecatapi.com/v1/breeds/search?q=${breed}`, (error, response, body) => {
-  if (error) throw error;
-  if (body.length < 1) {
-    console.log('There is no breed like that');
-  } else {
-    console.log(body[0].description);
-  }
-});
+module.exports = { fetchBreedDescription };
